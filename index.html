@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mnv Portfolio</title>
+    
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            --bg-color: #f0f4f8;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #0ea5e9;
+            --secondary: #6366f1;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --icon-filter: none;
+            --img-glow: rgba(0, 0, 0, 0.15); /* Light mode shadow */
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --secondary: #818cf8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --icon-filter: invert(1);
+            --img-glow: rgba(56, 189, 248, 0.3); /* Dark mode neon shadow */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.3s, color 0.3s, filter 0.3s; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color); color: var(--text-main);
+            overflow-x: hidden; scroll-behavior: smooth;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        .nav-menu { display: flex; align-items: center; gap: 30px; }
+        .nav-links { list-style: none; display: flex; gap: 20px; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; text-transform: uppercase; font-size: 0.9rem; }
+        .nav-links a:hover { color: var(--primary); }
+
+        .theme-btn {
+            background: transparent; border: 1px solid var(--glass-border); color: var(--text-main);
+            font-size: 1.2rem; cursor: pointer; border-radius: 50%; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .theme-btn:hover { background: var(--glass-bg); transform: scale(1.1); }
+        .hamburger { display: none; font-size: 1.8rem; cursor: pointer; color: var(--text-main); background: none; border: none; }
+
+        /* --- GLOBAL LAYOUT --- */
+        section { padding: 120px 5% 60px; max-width: 1200px; margin: auto; }
+        .section-title {
+            font-size: 2.5rem; text-align: center; margin-bottom: 50px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Image Styling */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .floating-img { 
+            width: 100%; max-width: 400px; height: auto; 
+            animation: float 4s ease-in-out infinite; 
+            filter: drop-shadow(0 20px 30px var(--img-glow));
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: #fff; border: none; padding: 12px 30px; border-radius: 30px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block;
+        }
+
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); border-radius: 20px; padding: 30px; box-shadow: var(--card-shadow);
+        }
+
+        /* --- SECTIONS --- */
+        .hero { display: flex; align-items: center; justify-content: space-between; gap: 40px; min-height: 100vh; }
+        .hero-text { flex: 1; }
+        .hero-text h1 { font-size: 3.5rem; line-height: 1.2; margin-bottom: 15px; }
+        .hero-text h1 span { color: var(--primary); }
+        .hero-text p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.6; max-width: 500px; }
+        .hero-visual { flex: 1; display: flex; justify-content: center; }
+
+        .about-wrapper { display: flex; align-items: center; gap: 40px; }
+        .about-img-box { flex: 1; display: flex; justify-content: center; }
+        .about-text-box { flex: 1; }
+        .about-text-box p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 15px; }
+
+        /* EXPERIENCE TIMELINE */
+        .timeline { border-left: 3px solid var(--primary); padding-left: 25px; margin-left: 15px; }
+        .timeline-item { position: relative; margin-bottom: 30px; }
+        .timeline-item::before { content: ''; position: absolute; left: -34px; top: 5px; width: 15px; height: 15px; background: var(--bg-color); border: 3px solid var(--primary); border-radius: 50%; }
+        .timeline-item h3 { color: var(--primary); font-size: 1.3rem; margin-bottom: 5px; }
+        .timeline-item h4 { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; }
+        .timeline-item p { color: var(--text-main); line-height: 1.6; font-size: 1rem;}
+
+        /* PROJECTS GRID (NEW) */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .project-card { transition: transform 0.3s; }
+        .project-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .project-card h3 { color: var(--primary); font-size: 1.5rem; margin-bottom: 15px; }
+        .project-card p { color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        .tech-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tech-tag { background: rgba(14, 165, 233, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+
+        /* SKILLS GRID */
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 25px; justify-items: center; }
+        .skill-card { width: 100%; max-width: 150px; text-align: center; transition: transform 0.3s; }
+        .skill-card:hover { transform: translateY(-8px); border-color: var(--primary); }
+        .skill-card img { width: 55px; height: 55px; margin-bottom: 10px; }
+        .github-icon { filter: var(--icon-filter); }
+
+        /* GAMES SECTION */
+        .games-wrapper { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; justify-items: center; }
+        .game-container { width: 100%; max-width: 380px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .game-container h3 { color: var(--primary); margin-bottom: 15px; font-size: 1.4rem; }
+        
+        /* Memory Game CSS */
+        .memory-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; perspective: 1000px; margin-bottom: 15px;}
+        .memory-card { aspect-ratio: 1; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.6s; }
+        .memory-card.flip { transform: rotateY(180deg); }
+        .memory-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; display: flex; justify-content: center; align-items: center; box-shadow: var(--card-shadow); }
+        .memory-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); font-size: 1.5rem; color: white; }
+        .memory-front { background: var(--glass-bg); border: 2px solid var(--primary); transform: rotateY(180deg); }
+        .memory-front img { width: 60%; height: 60%; filter: var(--icon-filter); }
+
+        /* Typing Test CSS */
+        .typing-area { background: var(--bg-color); padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); width: 100%; margin-bottom: 15px;}
+        #code-quote { font-family: monospace; color: var(--primary); font-size: 1.1rem; min-height: 50px; margin-bottom: 15px; display: block;}
+        #typing-input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-main); font-family: monospace; }
+        #typing-input:focus { outline: none; border-color: var(--primary); }
+
+        /* Snake Game CSS */
+        #snake-canvas { background-color: #0f172a; border: 2px solid var(--primary); border-radius: 10px; box-shadow: 0 0 15px var(--img-glow); margin-bottom: 15px;}
+
+        /* CONTACT SECTION */
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .contact-form input, .contact-form textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 8px; font-family: inherit; }
+
+        @media (max-width: 900px) {
+            .hero { flex-direction: column-reverse; text-align: center; padding-top: 150px; }
+            .about-wrapper { flex-direction: column; text-align: center; }
+            .hamburger { display: block; }
+            .nav-menu { position: absolute; top: 70px; left: -100%; width: 100%; background: var(--glass-bg); backdrop-filter: blur(20px); flex-direction: column; padding: 30px 0; transition: 0.4s; }
+            .nav-menu.active { left: 0; }
+            .nav-links { flex-direction: column; align-items: center; gap: 20px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">Mnv Portfolio</div>
+        <div class="nav-menu" id="navMenu">
+            <ul class="nav-links">
+                <li><a href="#home" onclick="closeMenu()">Home</a></li>
+                <li><a href="#about" onclick="closeMenu()">About</a></li>
+                <li><a href="#experience" onclick="closeMenu()">Experience</a></li>
+                <li><a href="#projects" onclick="closeMenu()">Projects</a></li> <li><a href="#skills" onclick="closeMenu()">Skills</a></li>
+                <li><a href="#playzone" onclick="closeMenu()">Play</a></li>
+                <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
+            </ul>
+            <button class="theme-btn" id="themeToggle">🌙</button>
+        </div>
+        <button class="hamburger" id="hamburger">☰</button>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-text">
+            <h1>Turn Logic <br><span>Into Magic</span></h1>
+            <p>Software Engineer building scalable backend architectures, and tracking real-time user analytics.</p>
+            <a href="#projects" class="btn">View My Work</a>
+        </div>
+        <div class="hero-visual">
+            <img src="hero.png" alt="3D Developer" class="floating-img">
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title">About Me</h2>
+        <div class="about-wrapper">
+            <div class="about-img-box">
+                <img src="about.png" alt="Developer Laptop" class="floating-img">
+            </div>
+            <div class="glass-card about-text-box">
+                <p>I specialize in building robust server architectures using Python and Flask. I actively develop applications that process user data, like capturing IP addresses and resolving them to country codes seamlessly via MySQL databases.</p>
+                <p>From automating deployments with Docker and AWS to writing clean, maintainable code, I bridge the gap between development and operations.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2 class="section-title">Work Experience</h2>
+        <div class="glass-card">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>Backend Software Engineer</h3>
+                    <h4>2024 - Present | Remote</h4>
+                    <p>Leading backend development, designing RESTful APIs, and optimizing MySQL database queries for faster response times. Mentoring junior developers in Python and Django best practices.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>DevOps & Infrastructure Engineer</h3>
+                    <h4>2022 - 2024 | Tech Corp</h4>
+                    <p>Containerized legacy applications using Docker. Set up CI/CD pipelines using Git/GitHub Actions to automate testing and AWS deployments.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="projects-grid">
+            <div class="glass-card project-card">
+                <h3>User Analytics Tracker</h3>
+                <p>A high-performance web application built to monitor incoming traffic. It captures client IPs, resolves geographical country codes, and persists data securely for real-time monitoring.</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Flask</span>
+                    <span class="tech-tag">MySQL</span>
+                </div>
+            </div>
+            
+            <div class="glass-card project-card">
+                <h3>Microservices Architecture</h3>
+                <p>Designed and deployed a scalable backend system that breaks down monolith services into smaller, manageable docker containers orchestrated on AWS.</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">Docker</span>
+                    <span class="tech-tag">AWS</span>
+                    <span class="tech-tag">Django</span>
+                </div>
+            </div>
+
+            <div class="glass-card project-card">
+                <h3>Automated Task Runner</h3>
+                <p>A background Python script integrated with Cron jobs that handles daily database cleanups, backups, and sends email reports automatically.</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Linux</span>
+                    <span class="tech-tag">Git</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title">My Toolbox</h2>
+        <div class="skills-grid">
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="Python"><span>Python</span></div>
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/django/django-plain.svg" alt="Django"><span>Django</span></div>
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/flask/flask-original.svg" alt="Flask"><span>Flask</span></div>
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" alt="MySQL"><span>MySQL</span></div>
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/git/git-original.svg" alt="Git"><span>Git</span></div>
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg" class="github-icon" alt="GitHub"><span>GitHub</span></div>
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original.svg" alt="Docker"><span>Docker</span></div>
+            <div class="glass-card skill-card"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" class="github-icon" alt="AWS"><span>AWS</span></div>
+        </div>
+    </section>
+
+    <section id="playzone">
+        <h2 class="section-title">The Dev Arcade</h2>
+        <div class="games-wrapper">
+            
+            <div class="glass-card game-container">
+                <h3>Tech Match</h3>
+                <div style="margin-bottom: 10px; font-weight: bold;">Matches: <span id="matches" style="color: var(--primary);">0</span>/8</div>
+                <div class="memory-board" id="memory-board"></div>
+                <button class="btn" onclick="initMemoryGame()">Reset Board</button>
+            </div>
+
+            <div class="glass-card game-container">
+                <h3>Dev Typing Speed</h3>
+                <div class="typing-area">
+                    <span id="code-quote">import flask</span>
+                    <input type="text" id="typing-input" placeholder="Type the code here..." autocomplete="off">
+                </div>
+                <div style="display:flex; justify-content:space-between; width:100%; margin-bottom: 15px; font-weight: bold;">
+                    <div>Time: <span id="time" style="color: var(--primary);">0</span>s</div>
+                    <div>WPM: <span id="wpm" style="color: var(--primary);">0</span></div>
+                </div>
+                <button class="btn" onclick="startTypingTest()">Next Snippet</button>
+            </div>
+
+            <div class="glass-card game-container">
+                <h3>Neon Snake</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Use Arrow Keys to Play</p>
+                <canvas id="snake-canvas" width="250" height="250"></canvas>
+                <button class="btn" onclick="startSnake()" style="margin-top: 10px;">Play Snake</button>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="section-title">Connect & Create</h2>
+        <div class="contact-grid">
+            <div class="glass-card contact-info">
+                <h3>Let's Talk Code.</h3>
+                <p>Have a question or a project idea? Feel free to drop a message!</p>
+                <br>
+                <p>📧 <strong>Email:</strong> your.email@example.com</p>
+                <p>💼 <strong>LinkedIn:</strong> in/yourprofile</p>
+                <p>🐙 <strong>GitHub:</strong> github.com/yourusername</p>
+            </div>
+            
+            <div class="glass-card contact-form">
+                <form onsubmit="event.preventDefault(); alert('Message Form working!');">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <textarea rows="4" placeholder="Your Message" required></textarea>
+                    <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- UI LOGIC ---
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+        hamburger.addEventListener('click', () => { navMenu.classList.toggle('active'); });
+        function closeMenu() { navMenu.classList.remove('active'); }
+
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const body = document.body;
+        const savedTheme = localStorage.getItem('portfolioTheme') || 'dark';
+        body.setAttribute('data-theme', savedTheme);
+        themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        themeToggleBtn.addEventListener('click', () => {
+            const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('portfolioTheme', newTheme);
+            themeToggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // --- GAME 1: MEMORY MATCH ---
+        const memoryBoard = document.getElementById('memory-board');
+        const techLogos = ['python/python-original.svg', 'django/django-plain.svg', 'flask/flask-original.svg', 'mysql/mysql-original-wordmark.svg', 'docker/docker-original.svg', 'git/git-original.svg', 'github/github-original.svg', 'linux/linux-original.svg'];
+        let hasFlippedCard = false, lockBoard = false, firstCard, secondCard, matches = 0;
+
+        function initMemoryGame() {
+            memoryBoard.innerHTML = ''; matches = 0; document.getElementById('matches').innerText = matches;
+            let gameDeck = [...techLogos, ...techLogos].sort(() => 0.5 - Math.random());
+            gameDeck.forEach(logo => {
+                const card = document.createElement('div'); card.classList.add('memory-card'); card.dataset.tech = logo;
+                card.innerHTML = `<div class="memory-face memory-front"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/${logo}" alt="Logo"></div><div class="memory-face memory-back">💻</div>`;
+                card.addEventListener('click', flipCard); memoryBoard.appendChild(card);
+            });
+        }
+        function flipCard() {
+            if (lockBoard || this === firstCard) return;
+            this.classList.add('flip');
+            if (!hasFlippedCard) { hasFlippedCard = true; firstCard = this; return; }
+            secondCard = this; checkForMatch();
+        }
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.tech === secondCard.dataset.tech;
+            if (isMatch) { 
+                firstCard.removeEventListener('click', flipCard); secondCard.removeEventListener('click', flipCard); 
+                matches++; document.getElementById('matches').innerText = matches; resetBoard();
+            } else {
+                lockBoard = true; setTimeout(() => { firstCard.classList.remove('flip'); secondCard.classList.remove('flip'); resetBoard(); }, 1000);
+            }
+        }
+        function resetBoard() { [hasFlippedCard, lockBoard] = [false, false]; [firstCard, secondCard] = [null, null]; }
+        initMemoryGame();
+
+        // --- GAME 2: TYPING TEST ---
+        const snippets = [
+            "from flask import Flask",
+            "SELECT * FROM users;",
+            "def analyze_traffic(data):",
+            "docker build -t webapp .",
+            "git commit -m 'Fixed CSS'"
+        ];
+        const quoteDisplay = document.getElementById('code-quote');
+        const typeInput = document.getElementById('typing-input');
+        const timeDisplay = document.getElementById('time');
+        const wpmDisplay = document.getElementById('wpm');
+        let timer, timeStart, isPlaying = false;
+
+        function startTypingTest() {
+            quoteDisplay.innerText = snippets[Math.floor(Math.random() * snippets.length)];
+            typeInput.value = ''; typeInput.disabled = false; typeInput.focus();
+            timeDisplay.innerText = '0'; wpmDisplay.innerText = '0';
+            isPlaying = false; clearInterval(timer);
+        }
+
+        typeInput.addEventListener('input', () => {
+            if (!isPlaying) { isPlaying = true; timeStart = new Date(); timer = setInterval(() => {
+                timeDisplay.innerText = Math.floor((new Date() - timeStart) / 1000);
+            }, 1000); }
+            
+            if (typeInput.value === quoteDisplay.innerText) {
+                clearInterval(timer); typeInput.disabled = true;
+                let timeTaken = (new Date() - timeStart) / 1000 / 60; // in minutes
+                let words = quoteDisplay.innerText.split(' ').length;
+                wpmDisplay.innerText = Math.round(words / timeTaken);
+            }
+        });
+        startTypingTest();
+
+        // --- GAME 3: NEON SNAKE ---
+        const canvas = document.getElementById('snake-canvas');
+        const ctx = canvas.getContext('2d');
+        const box = 10; let snake, food, d, gameLoop;
+
+        function initSnake() {
+            snake = [{x: 10*box, y: 10*box}];
+            food = {x: Math.floor(Math.random()*24+1)*box, y: Math.floor(Math.random()*24+1)*box};
+            d = "RIGHT";
+        }
+        
+        document.addEventListener("keydown", e => {
+            if([37,38,39,40].includes(e.keyCode)) e.preventDefault(); 
+            if(e.keyCode==37 && d!="RIGHT") d="LEFT"; else if(e.keyCode==38 && d!="DOWN") d="UP";
+            else if(e.keyCode==39 && d!="LEFT") d="RIGHT"; else if(e.keyCode==40 && d!="UP") d="DOWN";
+        });
+
+        function drawSnake() {
+            ctx.fillStyle = "#0f172a"; ctx.fillRect(0,0,canvas.width,canvas.height);
+            snake.forEach((seg, i) => { ctx.fillStyle = i===0 ? "#0ea5e9" : "#38bdf8"; ctx.fillRect(seg.x, seg.y, box, box); });
+            ctx.fillStyle = "#6366f1"; ctx.fillRect(food.x, food.y, box, box);
+            
+            let snakeX = snake[0].x, snakeY = snake[0].y;
+            if(d=="LEFT") snakeX-=box; if(d=="UP") snakeY-=box; if(d=="RIGHT") snakeX+=box; if(d=="DOWN") snakeY+=box;
+            
+            if(snakeX==food.x && snakeY==food.y) food = {x: Math.floor(Math.random()*24+1)*box, y: Math.floor(Math.random()*24+1)*box};
+            else snake.pop();
+            
+            let newHead = {x: snakeX, y: snakeY};
+            if(snakeX<0 || snakeX>=canvas.width || snakeY<0 || snakeY>=canvas.height || snake.some(s => s.x===newHead.x && s.y===newHead.y)) {
+                clearInterval(gameLoop); ctx.fillStyle="rgba(0,0,0,0.7)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle="#0ea5e9"; ctx.font="20px Arial"; ctx.fillText("Game Over", 70, 130); return;
+            }
+            snake.unshift(newHead);
+        }
+        function startSnake() { clearInterval(gameLoop); initSnake(); gameLoop = setInterval(drawSnake, 100); }
+        initSnake(); drawSnake(); clearInterval(gameLoop); 
+    </script>
+</body>
+</html>
